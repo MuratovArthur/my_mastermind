@@ -40,9 +40,16 @@ int main(int argc, char* argv[]){
     int flag_digit=0;
     while(rounds<attempts){
         int n=0;
-        while(read(0, &ch, 1)>0&&ch!='\n'){
+        int nread;
+        while((nread=read(0, &ch, 1)>0)&&ch!='\n'){
+            if(ch==EOF){
+                return 0;
+            }
             guess[n] = ch;
             n++;
+        }
+        if (nread==0){
+            return 0;
         }
         guess[n]='\0';
         for(int i=0;i<strlen(guess)-1;i++){
