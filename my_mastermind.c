@@ -5,7 +5,7 @@
 #include <unistd.h>
 
 int main(int argc, char* argv[]){
-    setbuf(stdout, NULL);     
+    setvbuf(stdout, NULL, _IONBF, 0);     
     char* code;
     int attempts=10;
     int code_passed_flag=0;
@@ -36,11 +36,16 @@ int main(int argc, char* argv[]){
     printf("---\n");
     printf("Round %d\n>", rounds);
     char guess[100];
-    int count;
-    while((count = read(STDIN_FILENO, guess, 100) > 0)&&rounds<attempts){
-        int flag_digit=0;
-        int i;
-        for(i=0;i<strlen(guess)-1;i++){
+    char ch;
+    int flag_digit=0;
+    while(rounds<attempts){
+        int n=0;
+        while(read(0, &ch, 1)>0&&ch!='\n'){
+            guess[n] = ch;
+            n++;
+        }
+        guess[n]='\0';
+        for(int i=0;i<strlen(guess)-1;i++){
             if(isdigit(guess[i])==0){
                 flag_digit=0;
                 break;
@@ -48,7 +53,6 @@ int main(int argc, char* argv[]){
                 flag_digit=1;
             } 
         }
-        guess[i]='\0';
         if(flag_digit==0||strlen(guess)!=4){
             printf("Wrong input!\n");
             printf(">");
@@ -56,7 +60,7 @@ int main(int argc, char* argv[]){
             rounds++;
             if(strcmp(guess, code)==0){
                 printf("Congratz! You did it!\n");
-                break;
+                return 0;
             }else{
                 int correctly_placed=0;
                 int misplaced=0;
